@@ -6,7 +6,7 @@
 
 Persistent AI agents have a memory problem that isn't about memory size. It's about isolation.
 
-Run a single-session agent long enough across multiple domains — coding, finance, personal logistics — and you'll hit a wall. Compaction events blend everything into a lossy average. The agent starts reaching across domains, contaminating answers with irrelevant context. Chroma Research named this "context rot" in 2025. The problem is well-documented. The solutions are incomplete.
+Run a single-session agent long enough across multiple domains — coding, finance, personal logistics — and you'll hit a wall. In my case, "long enough" was a few weeks of heavy daily use. Compaction events blend everything into a lossy average. The agent starts reaching across domains, contaminating answers with irrelevant context. Chroma Research named this "context rot" in 2025. The problem is well-documented. The solutions are incomplete.
 
 This post describes TSVC (Topic-Scoped Virtual Context): a system that treats AI conversation topics the way an OS treats processes. Separate address spaces. Controlled isolation. Topic-scoped compaction. We built it for a persistent Claude agent running on OpenClaw, measured 126 production topic switches across 12 topics with 3,735 exchanges tracked, and eliminated per-topic compactions entirely.
 
@@ -16,11 +16,11 @@ This post describes TSVC (Topic-Scoped Virtual Context): a system that treats AI
 
 TSVC is designed specifically for the **personal assistant model** — one main agent as a single point of contact for everything.
 
-The alternative is a swarm of specialized agents: a Finance Agent, a DevOps Agent, a Research Agent, each expert in its domain. This pattern has real appeal. But it has a fundamental UX problem: the user becomes the orchestrator. You switch between agents, you carry context across them, you remember which agent knows which decisions. The cognitive overhead doesn't disappear — it moves from the AI to you.
+The alternative is a swarm of specialized agents: a Finance Agent, a DevOps Agent, a Research Agent, each expert in its domain. This is the dominant pattern right now — every blog post, every framework, every tutorial in the agentic AI space pushes you toward building multiple dedicated agents. It has real appeal. But it has a fundamental UX problem: the user becomes the orchestrator. You switch between agents, you carry context across them, you remember which agent knows which decisions. The cognitive overload doesn't disappear — it moves from the AI to you. The person the AI was supposed to help is now managing a team of AIs.
 
-The personal assistant model is better. One persistent agent handles all domains — finances, infrastructure, projects, family logistics — and orchestrates sub-agents *behind the scenes* when parallelism helps. From the user's perspective: one conversation thread, full continuity, everything remembered. The agent acts as a genuine executive assistant, not a tool you have to drive.
+The personal assistant model is better. One persistent agent handles all domains — finances, infrastructure, projects, family logistics — and orchestrates sub-agents *behind the scenes* when parallelism helps. From the user's perspective: one conversation thread, full continuity, everything remembered. The agent delegates to specialized workers when needed, monitors their output, and presents results. You talk to one entity who runs the show.
 
-But this design creates a specific technical problem that the swarm model doesn't have: **context mixing**. When one agent accumulates conversation across many domains, topics bleed into each other. Financial discussions surface infrastructure details. Family decisions contaminate DevOps answers. Over time, the context window becomes a lossy average of everything. Chroma Research named this "context rot" in 2025.
+But this design creates a specific technical problem that the swarm model doesn't have: **context mixing**. When one agent accumulates conversation across many domains, topics bleed into each other. In my case, this happened within days of heavy use — not months. Financial discussions surface infrastructure details. Family decisions contaminate DevOps answers. Over time, the context window becomes a lossy average of everything. Chroma Research named this "context rot" in 2025.
 
 This is the problem TSVC solves. Not for swarm architectures (they distribute context externally) — for the personal assistant model, where one agent holds it all. The OS process metaphor provides the solution: give each topic its own isolated address space, manage switching explicitly, and share only what should be shared.
 
@@ -348,7 +348,7 @@ The key gap TSVC fills: no existing system gives each conversation domain its ow
 
 Production operation on a Telegram-based persistent assistant (running Claude via OpenClaw on an Intel NUC):
 
-Before TSVC: 8.5 MB session file, 3,140 lines, 21 global compactions, zero topic isolation.
+Before TSVC (after just weeks of daily use): 8.5 MB session file, 3,140 lines, 21 global compactions, zero topic isolation.
 
 After TSVC:
 - Per-topic session files: 10-340 KB (versus 8.5 MB global)

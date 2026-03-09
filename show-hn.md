@@ -1,8 +1,8 @@
 # Show HN: My AI Agent Kept Forgetting What We Were Talking About, So I Built Topic-Scoped Virtual Context
 
-I've been running a persistent AI assistant — I call him my agent — for about six months. He lives on an Intel NUC in my apartment, talks to me via Telegram, manages my calendar, does research, tracks my finance research, helps with infrastructure. One agent. Everything.
+I've been running a persistent AI assistant — I call him my agent — for a few weeks. He lives on an Intel NUC in my apartment, talks to me via Telegram, does research, tracks my finance studies, helps with infrastructure. One agent. Everything.
 
-The problem started around month three.
+The problem started within days.
 
 ---
 
@@ -10,11 +10,11 @@ The problem started around month three.
 
 Before I explain context rot, let me explain why I have this problem in the first place.
 
-The alternative to "one agent for everything" is a swarm of specialized agents — a Finance Agent, an Infrastructure Agent, a Projects Agent, a Research Agent. A lot of teams are building this way. It sounds clean on a whiteboard.
+If you follow the agentic AI space right now, everyone is pushing swarms. Every blog post, every framework, every tutorial: build a Finance Agent, an Infrastructure Agent, a Projects Agent, a Research Agent. Specialized agents for everything. It sounds clean on a whiteboard.
 
-The problem is that *you* become the orchestrator. You switch between agents. You remember which agent knows what. You manually carry context from one conversation to the next when your finance discussion reveals something about your infrastructure setup. The complexity doesn't disappear — it moves to you.
+The problem is that *you* become the orchestrator. You switch between agents. You remember which agent knows what. You manually carry context from one conversation to the next when your finance discussion reveals something about your infrastructure setup. The cognitive overload doesn't disappear — it moves from the AI to you. The person the AI was supposed to help is now managing a team of AIs.
 
-I chose the personal assistant model instead. One agent. Everything. He knows my finances, my infrastructure, my family situation, my side projects. He remembers decisions I made three weeks ago and why I made them. He routes sub-agents behind the scenes when tasks need parallelism — but from my perspective, I'm talking to one entity who knows all of it. That's a qualitatively different experience. An AI system that actually handles your life, not one that requires you to manage the AIs.
+I chose the personal assistant model instead. One agent. Everything. He knows my finances, my infrastructure, my family situation, my side projects. He remembers decisions I made last week and why I made them. When tasks need parallelism, he spins up specialized sub-agents behind the scenes and monitors them — but from my perspective, I'm talking to one entity who knows all of it and handles the delegation himself. That's a qualitatively different experience. An AI system that actually runs your life, not one that requires you to manage the AIs.
 
 This is the model TSVC is designed for. And it's exactly why context rot becomes a problem.
 
@@ -24,9 +24,9 @@ This is the model TSVC is designed for. And it's exactly why context rot becomes
 
 The agent is built on Claude via OpenClaw, a self-hosted agent framework. Persistent agent. Same session. And that session was... accumulating.
 
-By late February, the session file was **8.5 MB**. Three thousand one hundred forty lines of conversation. The agent had experienced **21 global compactions** — the point where the context window fills and the entire conversation history gets summarized into a lossy blob. Twenty-one times.
+By late February — just weeks into daily use — the session file was **8.5 MB**. Three thousand one hundred forty lines of conversation. The agent had experienced **21 global compactions** — the point where the context window fills and the entire conversation history gets summarized into a lossy blob. Twenty-one times. In weeks, not months.
 
-You know what 21 compactions does to a conversation history that spans financial strategies, family planning, infrastructure debugging, and AI development work? It turns it into soup. A degraded average of everything. "Context rot" — Chroma Research put a name to it in 2025, and the description is perfect: the agent's memory isn't lost, it's blended into something that's no longer useful for any specific domain.
+You know what 21 compactions does to a conversation history that spans financial strategies, family planning, infrastructure debugging, and AI development work? It turns it into soup. A degraded average of everything. "Context rot" — Chroma Research put a name to it in 2025, and the description is perfect: the agent's memory isn't lost, it's blended into something that's no longer useful for any specific domain. And this happened in *days*, not months — that's how fast context rots when you're using your agent for everything, all day.
 
 Talking to the post-compaction agent about our online education course was like talking to someone with amnesia who remembered fragments of every conversation we'd ever had, mixed together. He'd bring up infrastructure details in the middle of a finance discussion. Reference family decisions when I asked about DevOps. Not wrong, exactly. Just... soup.
 
